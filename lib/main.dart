@@ -17,7 +17,7 @@ void main() async{
       apiConfig: ApiConfig(
         host: dotenv.env['HOST'] as String,
         prefix: dotenv.env['PREFIX'] as String,
-        useHttps: dotenv.env['ISHTTPS'] == 'true' ? true : false,
+        useHttps: true,
         port: int.parse(dotenv.env['PORT'] as String),
       ),
       prefs: await SharedPreferences.getInstance(),

@@ -50,22 +50,22 @@ class ApiService {
 
     var response = await http.get(
       endpointUri(endpoint, params: params, isSlashNeedIt: isSlashNeedIt),
-      headers: mergeHeaders(mergedHeaders),
+      headers: mergedHeaders,
     );
 
 
       final bool isRefresh = false;
 
-      if (isRefresh) {
+
         authKey = prefs.getString('authKey');
         mergedHeaders.addAll(
             {});
 
         response = await http.get(
           endpointUri(endpoint, params: params, isSlashNeedIt: isSlashNeedIt),
-          headers: mergeHeaders(mergedHeaders),
+          headers: mergedHeaders,
         );
-      }
+
 
 
     //debugPrint('Uri: ${endpointUri(endpoint, params: params)}');
@@ -80,49 +80,39 @@ class ApiService {
       String endpoint, {
         Map<String, String>? headers,
         Object? body,
-        Encoding? encoding,
+        Map<String, String>? params
       }) async {
     Map<String, String> mergedHeaders = headers ?? {};
-
+    //set the token in headers to access the api
     mergedHeaders.addAll({
-      'Content-Type': 'application/json',
+      'app': '583f0a5b-c017-4956-b788-a6305767c117',
     });
-    final prefs = await SharedPreferences.getInstance();
-    String? authKey = prefs.getString('authKey');
-    if (authKey != null) {
-      mergedHeaders
-          .addAll({'Authorization': 'authMethodRepository.formatToken(authKey)'});
+    // final prefs = await SharedPreferences.getInstance();
+    // String? authKey = prefs.getString('authKey');
+    // if (authKey != null) {
+    //   mergedHeaders
+    //       .addAll({'Authorization': 'authMethodRepository.formatToken(authKey)'});
+    // }
+
+    try {
+
+      var response = await http.post(
+        endpointUri(endpoint,  params: params),
+        headers: mergedHeaders,
+        body: json.encode(body),
+
+      );
+      return handleExceptions(response);
+    } on Exception catch (e) {
+      print('ERROR API SERVICE $e');
+      rethrow;
     }
 
-    var response = await http.post(
-      endpointUri(endpoint),
-      headers: mergeHeaders(mergedHeaders),
-      body: json.encode(body),
-      encoding: encoding,
-    );
 
-    // Handle set-cookie header for both web and app using the appropriate code
-    // given by the HttpClient.
-    //await HttpClient.instance.handleHeaders(response, this.headers);
 
-    if (handleExceptions(response).statusCode == 401) {
-     // final bool isRefresh = await authMethodRepository.refreshToken(prefs);
 
-      if (true) {
-        authKey = prefs.getString('authKey');
-        mergedHeaders.addAll(
-            {'Authorization':' '});
 
-        response = await http.post(
-          endpointUri(endpoint),
-          headers: mergeHeaders(mergedHeaders),
-          body: json.encode(body),
-          encoding: encoding,
-        );
-      }
-    }
 
-    return handleExceptions(response);
   }
 
 Response handleExceptions(Response response) {
@@ -143,21 +133,31 @@ Response handleExceptions(Response response) {
     case 503:
     case 504:
       throw ServerErrorException(response.body.toString());
+    case 422:
+      print('Error 422: ${response.request!.url}');
+      return response;
     case 200:
     default:
       return response;
   }
 }
 
-  Map<String, String> mergeHeaders(Map<String, String>? headers) {
-    var mergedHeaders = Map<String, String>.from(this.headers);
-    mergedHeaders.addAll(headers ?? {});
-    mergedHeaders.addAll({
-      // 'content-type': 'application/json; charset=utf-8',
-      'Accept': 'application/json',
-    });
 
-    return mergedHeaders;
+
+  Future<bool> hasLocalCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey('authKey')
+    // &&
+    //     prefs.containsKey('csrfToken') &&
+    //     prefs.containsKey('userData')
+        ;
+  }
+
+  Future<void> removeLocalCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+
+    headers = {};
   }
 
   Uri endpointUri(String endpoint,

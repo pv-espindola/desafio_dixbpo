@@ -65,9 +65,9 @@ class People{
     return People(
       id: map['id'] as int,
       type: map['type'] as int,
-      name: map['name'] as String,
-      nickname: map['nickname'] as String,
-      stateRegistration: map['state_registration'] as String,
+      name: map['name'] ,
+      nickname: map['nickname'],
+      stateRegistration: map['state_registration'],
       nif: map['nif'] as String,
       email: map['email'] as String,
       address: map['address'] as String,
@@ -75,11 +75,11 @@ class People{
       number: map['number'] as String,
       zipCode: map['zip_code'] as String,
       cityId: map['city_id'] as int,
-      phone: map['phone'] as String,
-      logo: map['logo'] as String,
+      phone: map['phone'] ,
+      logo: map['logo'] ,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      city: map['city'] as City,
+      city: City.fromMap(map['city']),
     );
   }
 }

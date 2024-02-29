@@ -1,4 +1,4 @@
-HOST=veraapi.link
-PREFIX=api/v1
-ISHTTPS=true
-PORT=80
+HOST= bis365.com.br
+PREFIX= bid365/api/v1
+ISHTTPS= true
+PORT= 443

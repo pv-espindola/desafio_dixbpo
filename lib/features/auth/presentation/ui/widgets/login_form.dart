@@ -5,14 +5,21 @@ import 'package:provider/provider.dart';
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
+  String? get getInitialEmail => 'fabioln@ldix.com';
+  String? get getInitialPassword => '1234567o';
+
   @override
   Widget build(BuildContext context) {
     AuthProvider auth = context.read<AuthProvider>();
     ThemeData theme = Theme.of(context);
-print('THEME: ${theme.brightness.toString()}');
+    print('THEME: ${theme.brightness.toString()}');
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       child: Form(
+        key: auth.formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -22,13 +29,14 @@ print('THEME: ${theme.brightness.toString()}');
               child: Text(
                 'Email',
                 style:
-                    theme.textTheme.titleMedium!.copyWith(color: Colors.white),
+                theme.textTheme.titleMedium!.copyWith(color: Colors.white),
               ),
             ),
             const SizedBox(
               height: 8,
             ),
             TextFormField(
+              initialValue: getInitialEmail,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -36,6 +44,14 @@ print('THEME: ${theme.brightness.toString()}');
                   ),
                   filled: true,
                   fillColor: Colors.white),
+              validator: (value) {
+                value ??= '';
+                if (value.isEmpty) {
+                  return 'Campo Obrigatorio';
+                }
+                return null;
+              },
+              onSaved: (value) => auth.loadEmail(value!),
             ),
             Container(
               alignment: Alignment.centerLeft,
@@ -43,13 +59,14 @@ print('THEME: ${theme.brightness.toString()}');
               child: Text(
                 'Senha',
                 style:
-                    theme.textTheme.titleMedium!.copyWith(color: Colors.white),
+                theme.textTheme.titleMedium!.copyWith(color: Colors.white),
               ),
             ),
             const SizedBox(
               height: 8,
             ),
             TextFormField(
+              initialValue: getInitialPassword,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -58,6 +75,14 @@ print('THEME: ${theme.brightness.toString()}');
                   filled: true,
                   fillColor: Colors.white),
               obscureText: true,
+              validator: (value) {
+                value ??= '';
+                if (value.isEmpty) {
+                  return 'Campo Obrigatorio';
+                }
+                return null;
+              },
+              onSaved: (value) => auth.loadPassword(value!),
             ),
             Container(
               alignment: Alignment.centerRight,
@@ -65,7 +90,7 @@ print('THEME: ${theme.brightness.toString()}');
                   onPressed: () {},
                   style: ButtonStyle(
                     foregroundColor:
-                        MaterialStateProperty.resolveWith((states) {
+                    MaterialStateProperty.resolveWith((states) {
                       // If the button is pressed, return green, otherwise blue
                       if (states.contains(MaterialState.pressed)) {
                         return theme.colorScheme.onPrimary;
@@ -79,10 +104,12 @@ print('THEME: ${theme.brightness.toString()}');
               height: 24,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                auth.login();
+              },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith(
-                  (states) {
+                      (states) {
                     // If the button is pressed, return green, otherwise blue
                     if (states.contains(MaterialState.pressed)) {
                       return theme.colorScheme.onPrimary;
