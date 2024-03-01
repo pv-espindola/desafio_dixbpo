@@ -9,6 +9,7 @@ import 'config/provider_scope.dart';
 
 void main() async{
   await dotenv.load(fileName: "dotenv");
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
   const myApp = ProviderScope(
       child: DesafioApp());
 
@@ -20,7 +21,7 @@ void main() async{
         useHttps: true,
         port: int.parse(dotenv.env['PORT'] as String),
       ),
-      prefs: await SharedPreferences.getInstance(),
+      prefs: prefs,
 
   child: myApp,
   );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../features/auth/domain/auth_repository.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
@@ -14,10 +15,12 @@ class ProviderScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = ApiService();
+    SharedPreferences prefs = AppConfig.of(context).prefs;
+    final apiService = ApiService(prefs: prefs);
     apiService.configApiService(AppConfig.of(context).apiConfig);
 
     final authRepository = AuthRepository(
+      prefs: prefs,
       apiService: apiService,
     );
 

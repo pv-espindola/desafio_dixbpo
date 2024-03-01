@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:desafio_dixbpo/features/auth/data/auth_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,6 +79,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> login() async {
+    setAuthState(status: AuthStatus.loading);
     if(formKey.currentState!.validate()){
       formKey.currentState!.save();
     }
@@ -88,6 +90,7 @@ class AuthProvider with ChangeNotifier {
 
       setAuthState(status: AuthStatus.authenticated, user: user);
     } catch (e) {
+      setAuthState(status: AuthStatus.unauthenticated);
       debugPrint('LOGIN ERROR:  $e');
     }
   }
@@ -97,24 +100,25 @@ class AuthProvider with ChangeNotifier {
   /// in the background. If there's no user information locally, force sign out.
   Future<void> tryAutoSignin(SharedPreferences prefs,
       {bool testing = false}) async {
-    final userData = prefs.getString('userData');
-    final authKey = prefs.getString('authKey');
+    setAuthState(status: AuthStatus.loading);
+    final userData = prefs.getString('user_data');
+    final authKey = prefs.getString('token');
 
-    ApiService apiService = authRepository.apiService;
+    AuthToken authToken = authRepository.authToken;
 
     try {
-      if (userData != null && await apiService.hasLocalCredentials()) {
+      if (authToken.haveAccess) {
         // Get user data from local storage immediately.
-        final user = User.fromMap(json.decode(userData));
+        final user = User.fromMap(authToken.userData);
 
         setAuthState(
           status: AuthStatus.authenticated,
-          authKey: authKey,
+          authKey: authToken.token,
           user: user,
         );
 
         // Asynchronously trigger a request to get the latest user data.
-        updateCurrentUser(user.id.toString(), authKey);
+        updateCurrentUser(user, authKey);
       } else {
         signOut(authStatus: AuthStatus.unauthenticated);
       }
@@ -125,15 +129,14 @@ class AuthProvider with ChangeNotifier {
 
   /// Get the currently authenticated user data from the server and set the
   /// state with the new user data.
-  Future<void> updateCurrentUser(String userId, String? authKey) async {
+  Future<void> updateCurrentUser(User user, String? authKey) async {
     try {
-      // final user = await userRepository.getUser(userId);
-      //
-      // setAuthState(AuthState(
-      //   authStatus: AuthStatus.authenticated,
-      //   authKey: authKey,
-      //   user: user,
-      // ));
+
+      setAuthState(
+        status: AuthStatus.authenticated,
+        authKey: authKey,
+        user: user,
+      );
     } catch (e) {
       // If something wrong happens on getting the user data, force sign out.
       debugPrint('Error updating user: $e');

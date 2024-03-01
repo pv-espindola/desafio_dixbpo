@@ -9,96 +9,81 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../config/api_config.dart';
 import '../config/app_exceptions.dart';
 
+const authKey = 'Authorization';
+
 class ApiService {
   late ApiConfig config;
   late String host;
   late String prefix;
   late int port;
   late bool useHttps;
-
+  SharedPreferences prefs;
   Map<String, String> headers = {};
 
-  static final ApiService _apiService = ApiService._internal();
 
-  factory ApiService() {
+  factory ApiService({required SharedPreferences prefs}) {
+    final ApiService _apiService = ApiService._internal(prefs);
     return _apiService;
   }
 
-  ApiService._internal();
-  void configApiService(ApiConfig config) {
-    // On Android, if the API host is set to localhost, use specific IP.
-    host = config.host;
+  ApiService._internal(this.prefs);
 
+  void configApiService(ApiConfig config) {
+    host = config.host;
     port = config.port;
     prefix = config.prefix;
     useHttps = config.useHttps;
-
-
+    configHeaders();
   }
+
+
+  void configHeaders(){
+    headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'app': '583f0a5b-c017-4956-b788-a6305767c117',
+      //'Authorization': 'Bearer $token',
+    };
+  }
+
+  addTokenAccess(String token){
+    headers.addAll({authKey: 'Bearer $token'});
+  }
+
+  bool get haveAuthorization => headers.containsKey(authKey);
+
   Future<Response> get(String endpoint,
       {Map<String, String>? headers,
         Map<String, String>? params,
-        bool? isSlashNeedIt}) async {
-    Map<String, String> mergedHeaders = headers ?? {};
+       }) async {
 
     final prefs = await SharedPreferences.getInstance();
-    String? authKey = prefs.getString('authKey');
-    if (authKey != null) {
-      mergedHeaders
-          .addAll({});
+
+    if (!haveAuthorization) {
+      String? token = prefs.getString(authKey);
+      if(token != null) {
+        addTokenAccess(authKey);
+      }
     }
-
     var response = await http.get(
-      endpointUri(endpoint, params: params, isSlashNeedIt: isSlashNeedIt),
-      headers: mergedHeaders,
+      endpointUri(
+          endpoint,
+          params: params),
+      headers: this.headers,
     );
-
-
-      final bool isRefresh = false;
-
-
-        authKey = prefs.getString('authKey');
-        mergedHeaders.addAll(
-            {});
-
-        response = await http.get(
-          endpointUri(endpoint, params: params, isSlashNeedIt: isSlashNeedIt),
-          headers: mergedHeaders,
-        );
-
-
-
-    //debugPrint('Uri: ${endpointUri(endpoint, params: params)}');
-
     return handleExceptions(response);
   }
-
-  /// Wrapper for POST requests that accepts an [Endpoint] string, parses the
-  /// response handling the set-cookie header, and returns the HTTP response,
-  /// checking response status and raising possible exceptions.
   Future<Response> post(
       String endpoint, {
         Map<String, String>? headers,
         Object? body,
         Map<String, String>? params
       }) async {
-    Map<String, String> mergedHeaders = headers ?? {};
-    //set the token in headers to access the api
-    mergedHeaders.addAll({
-      'app': '583f0a5b-c017-4956-b788-a6305767c117',
-    });
-    // final prefs = await SharedPreferences.getInstance();
-    // String? authKey = prefs.getString('authKey');
-    // if (authKey != null) {
-    //   mergedHeaders
-    //       .addAll({'Authorization': 'authMethodRepository.formatToken(authKey)'});
-    // }
 
     try {
-
       var response = await http.post(
         endpointUri(endpoint,  params: params),
-        headers: mergedHeaders,
+        headers: this.headers,
         body: json.encode(body),
 
       );
@@ -107,11 +92,6 @@ class ApiService {
       print('ERROR API SERVICE $e');
       rethrow;
     }
-
-
-
-
-
 
   }
 
@@ -143,20 +123,23 @@ Response handleExceptions(Response response) {
 }
 
 
+  bool hasLocalCredentials(){
+    String token = '';
+    bool containsAccess = prefs.containsKey('authKey');
+    if(containsAccess){
+      token = prefs.getString('authKey')!;
+      headers.containsKey(authKey)?
+          null
+          : addTokenAccess(token);
+    }
 
-  Future<bool> hasLocalCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey('authKey')
-    // &&
-    //     prefs.containsKey('csrfToken') &&
-    //     prefs.containsKey('userData')
-        ;
+
+    return containsAccess;
   }
 
   Future<void> removeLocalCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
-
     headers = {};
   }
 

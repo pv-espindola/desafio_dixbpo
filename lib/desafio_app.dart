@@ -1,3 +1,4 @@
+import 'package:desafio_dixbpo/features/main_view.dart';
 import 'package:flutter/material.dart';
 
 import 'config/color_schemes.g.dart';
@@ -13,7 +14,7 @@ class DesafioApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: const LoginPage(),
+      home: const MainView(),
     );
   }
 }

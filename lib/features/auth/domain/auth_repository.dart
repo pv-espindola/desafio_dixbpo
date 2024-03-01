@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:desafio_dixbpo/features/auth/data/auth_token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/app_config.dart';
@@ -8,37 +9,34 @@ import '../../../service/endpoint.dart';
 import '../data/user.dart';
 
 class AuthRepository {
+  final SharedPreferences prefs;
   final ApiService apiService;
+  late AuthToken authToken;
 
   AuthRepository({
+    required this.prefs,
     required this.apiService,
-  });
+  }) {
+    authToken = AuthToken(prefs: prefs);
+  }
 
-  /// Sign in with email and password. If credentials are stored locally,
-  /// they will be retrieved from shared preferences. Either way, this method
-  /// will return a Map with the following keys: 'key' and 'id'.
+
+
+
   Future<User> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
-    late String? authKey;
-    late String userId;
+
 
     Map<String, String> userMapReturn;
 
     try {
-      // if (await apiService.hasLocalCredentials()) {
-      //   final userData = prefs.getString('userData')!;
-      //
-      //   final user = User.fromMap(json.decode(userData));
-      //
-      //   authKey = prefs.getString('authKey')!;
-      //   userId = user.id.toString();
-      //
-      //   return user;
-      // } else {
-        // if no local credentials are stored, we need to login
-      print('REPOSITORY: email: $email  password: $password ');
+      if (apiService.hasLocalCredentials()) {
+        final userData = prefs.getString('user_data')!;
+        final user = User.fromMap(json.decode(userData));
 
 
+        return user;
+      } else {
       final response = await apiService.post(
           Endpoint.userLogin,
           params: {
@@ -47,16 +45,19 @@ class AuthRepository {
           },
         );
         print('ON LOGIN RESPONSE: ${response.statusCode} ');
-
         final authData = json.decode(utf8.decode(response.bodyBytes))
             as Map<String, dynamic>;
-
-
       Map<String, dynamic> userData = authData['data']['user'];
-      print('LOGIN RESPONSE DATA: ${userData} ');
+      String accessToken = authData['data']['token'];
+      //      print('LOGIN RESPONSE DATA: ${userData} ');
         final user = User.fromMap(userData);
+        authToken.logIn({
+          'token' : accessToken,
+          'id' : user.id,
+          'user_data' : userData
+        });
         return user;
-      //}
+      }
     } on Exception {
       await apiService.removeLocalCredentials();
       rethrow;
