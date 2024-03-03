@@ -24,21 +24,24 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     RegisterFormProvider fromProvider = context.watch<RegisterFormProvider>();
     print('REGISTER FORM => ${fromProvider.state.form.length} ');
-    return Form(
-      key: fromProvider.formKey,
-      child: AnimatedList(
-        key: fromProvider.listKey,
-        shrinkWrap: true,
-          initialItemCount: fromProvider.state.form.length,
-          itemBuilder: (context, index, animation){
-          ProfileTextfield child = fromProvider.state.form[index];
-          FocusNode focusNode = child.focus;
-          FocusScope.of(context).requestFocus(focusNode);
-          print('REGISTER child => ${child.toString()} ');
-            return FadeTransition(
-                opacity: animation,
-                child: child);
-          }),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Form(
+        key: fromProvider.formKey,
+        child: AnimatedList(
+          key: fromProvider.listKey,
+          shrinkWrap: true,
+            initialItemCount: fromProvider.state.form.length,
+            itemBuilder: (context, index, animation){
+            ProfileTextfield child = fromProvider.state.form[index];
+            FocusNode focusNode = child.focus;
+            FocusScope.of(context).requestFocus(focusNode);
+            print('REGISTER child => ${child.toString()} ');
+              return FadeTransition(
+                  opacity: animation,
+                  child: child);
+            }),
+      ),
     );
   }
 }

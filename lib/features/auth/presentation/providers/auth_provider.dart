@@ -95,6 +95,22 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> login2(String username, String password) async {
+    setAuthState(status: AuthStatus.loading);
+    try {
+      print('email: $username  password: $password ');
+
+      User user = await authRepository.login(username, password);
+
+      setAuthState(status: AuthStatus.authenticated, user: user);
+    } catch (e) {
+      setAuthState(status: AuthStatus.unauthenticated);
+      debugPrint('LOGIN ERROR:  $e');
+    }
+  }
+
+
+
   /// Checks if user is stored locally. If so, get it, update the state and
   /// trigger an asynchronous request in order to update latest user information
   /// in the background. If there's no user information locally, force sign out.

@@ -7,7 +7,7 @@ class People{
   String nif;
   String email;
   String address;
-  String complement;
+  String? complement;
   String number;
   String zipCode;
   int cityId;
@@ -26,7 +26,7 @@ class People{
     required this.nif,
     required this.email,
     required this.address,
-    required this.complement,
+    this.complement,
     required this.number,
     required this.zipCode,
     required this.cityId,
@@ -71,7 +71,7 @@ class People{
       nif: map['nif'] as String,
       email: map['email'] as String,
       address: map['address'] as String,
-      complement: map['complement'] as String,
+      complement: map['complement'],
       number: map['number'] as String,
       zipCode: map['zip_code'] as String,
       cityId: map['city_id'] as int,

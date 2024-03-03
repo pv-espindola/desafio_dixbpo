@@ -7,9 +7,11 @@ import 'package:provider/provider.dart';
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
-  String? get getInitialEmail => 'fabioln@ldix.com';
+  //String? get getInitialEmail => 'fabioln@ldix.com';
+  String? get getInitialEmail => 'pvespindola.developer@gmail.com';
 
-  String? get getInitialPassword => '1234567o';
+  //String? get getInitialPassword => '1234567o';
+  String? get getInitialPassword => '123456789!';
 
   @override
   Widget build(BuildContext context) {

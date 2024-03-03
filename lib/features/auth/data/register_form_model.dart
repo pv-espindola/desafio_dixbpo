@@ -40,6 +40,22 @@ class RegisterFormModel{
     senha2 = value;
   }
 
+  Map<String, dynamic> toMap(){
+    Map<String, dynamic> map = {
+      "name": nome,
+      "email": email,
+      "phone": phone,
+      "password": senha1,
+      "nif": '02839023539',
+      "city_id": 2308,
+      "zip_code": '31310490',
+      "address": 'Av. Fleming',
+      "number": '513',
+      "district": 'Ouro Preto',
+    };
+    return map;
+  }
+
 
 
 

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:desafio_dixbpo/features/auth/data/auth_token.dart';
+import 'package:desafio_dixbpo/features/auth/data/register_form_model.dart';
+import 'package:desafio_dixbpo/features/auth/presentation/ui/widgets/register_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/app_config.dart';
@@ -49,7 +51,9 @@ class AuthRepository {
             as Map<String, dynamic>;
       Map<String, dynamic> userData = authData['data']['user'];
       String accessToken = authData['data']['token'];
-      //      print('LOGIN RESPONSE DATA: ${userData} ');
+      // print('LOGIN RESPONSE DATA: ${userData} ');
+      // print('LOGIN RESPONSE token: ${accessToken} ');
+
         final user = User.fromMap(userData);
         authToken.logIn({
           'token' : accessToken,
@@ -67,7 +71,7 @@ class AuthRepository {
   /// Sign up with email only. Password will be sent to email. The request to
   /// register endpoint will automatically log the user in if successful. So,
   /// we return the same data as signin (Map with 'key' and 'id' keys).
-  Future<bool> signup({required User user}) async {
+  Future<bool> signup({required RegisterFormModel user}) async {
     try {
       final Map<String, dynamic> body;
 
@@ -80,6 +84,7 @@ class AuthRepository {
 
       final authData =
           json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      print('REGISTER NEW USER \n $authData');
 
       // keep the data in local storage
       // Map<String, String> userMapReturn =

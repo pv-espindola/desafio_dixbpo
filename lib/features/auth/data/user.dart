@@ -35,10 +35,12 @@ class User {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'person_id': personId,
-      'people': people,
-      'tenants': tenants,
+      'people': people.toMap(),
+      'tenants': List.generate(tenants.length, (index) => tenants[index].toMap()),
     };
   }
+
+
 
   factory User.fromMap(Map<String, dynamic> map) {
     DateTime? emailVerifiedAt = map['email_verified_at'] != null

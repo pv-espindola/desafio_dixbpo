@@ -30,7 +30,7 @@ class ProviderScope extends StatelessWidget {
         create: (_) => AuthProvider(authRepository: authRepository),
       ),
       ChangeNotifierProvider<RegisterFormProvider>(
-        create: (_) => RegisterFormProvider(),
+        create: (_) => RegisterFormProvider(authRepository: authRepository),
       ),
 
     ],
