@@ -1,3 +1,4 @@
+import 'package:desafio_dixbpo/config/app_config.dart';
 import 'package:desafio_dixbpo/features/auth/presentation/providers/auth_provider.dart';
 import 'package:desafio_dixbpo/features/auth/presentation/providers/auth_state.dart';
 import 'package:desafio_dixbpo/features/auth/presentation/ui/pages/login_page.dart';
@@ -15,8 +16,17 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp)=>
+    context.read<AuthProvider>().tryAutoSignin(AppConfig.of(context).prefs));
+  }
+
+  @override
   Widget build(BuildContext context) {
     AuthProvider auth = context.watch<AuthProvider>();
+
 
     switch (auth.state.authStatus) {
       case AuthStatus.loading:

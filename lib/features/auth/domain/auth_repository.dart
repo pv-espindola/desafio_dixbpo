@@ -58,7 +58,7 @@ class AuthRepository {
         authToken.logIn({
           'token' : accessToken,
           'id' : user.id,
-          'user_data' : userData
+          'user_data' : jsonEncode(userData)
         });
         return user;
       }

@@ -10,7 +10,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+      centerTitle: true,
+        actions: [ Padding(
+          padding: const EdgeInsets.only(right: 12.0),
+          child: IconButton(onPressed: (){}, icon: const  Icon(Icons.more_vert)),
+        )],
+      ),
       body: SafeArea(
         child: Column(
           children: [

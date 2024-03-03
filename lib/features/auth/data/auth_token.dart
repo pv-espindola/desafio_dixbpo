@@ -34,7 +34,7 @@ class AuthToken implements AuthMethodRepository {
     };
   }
 
-  get haveAccess => prefs.containsKey(keyAuthMap) && prefs.containsKey('user_data');
+  bool get haveAccess => prefs.containsKey(keyAuthMap) && prefs.containsKey('user_data');
 
   Map<String, dynamic> get userData {
     String data = prefs.getString('user_data') ?? '';
