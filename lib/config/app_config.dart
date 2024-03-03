@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_config.dart';
@@ -27,4 +28,17 @@ class AppConfig extends InheritedWidget {
   bool updateShouldNotify(AppConfig oldWidget) => false;
 
   //String get version => "${packageInfo.version} (${packageInfo.buildNumber})";
+
+  InputDecoration get loginStyle => InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.grey),
+      ),
+      filled: true,
+      fillColor: Colors.white);
+
+
+
+
+
 }

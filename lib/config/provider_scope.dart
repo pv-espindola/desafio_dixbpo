@@ -1,3 +1,4 @@
+import 'package:desafio_dixbpo/features/auth/presentation/providers/register_form_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +28,12 @@ class ProviderScope extends StatelessWidget {
     return MultiProvider(providers: [
       ChangeNotifierProvider<AuthProvider>(
         create: (_) => AuthProvider(authRepository: authRepository),
-      ),    ],
+      ),
+      ChangeNotifierProvider<RegisterFormProvider>(
+        create: (_) => RegisterFormProvider(),
+      ),
+
+    ],
     child: child,
     );
   }

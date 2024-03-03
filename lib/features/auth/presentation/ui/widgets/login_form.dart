@@ -1,4 +1,6 @@
+import 'package:desafio_dixbpo/config/app_config.dart';
 import 'package:desafio_dixbpo/features/auth/presentation/providers/auth_provider.dart';
+import 'package:desafio_dixbpo/features/auth/presentation/ui/pages/new_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,6 +8,7 @@ class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
   String? get getInitialEmail => 'fabioln@ldix.com';
+
   String? get getInitialPassword => '1234567o';
 
   @override
@@ -37,13 +40,7 @@ class LoginForm extends StatelessWidget {
             ),
             TextFormField(
               initialValue: getInitialEmail,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white),
+              decoration: AppConfig.of(context).loginStyle,
               validator: (value) {
                 value ??= '';
                 if (value.isEmpty) {
@@ -67,13 +64,7 @@ class LoginForm extends StatelessWidget {
             ),
             TextFormField(
               initialValue: getInitialPassword,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white),
+              decoration: AppConfig.of(context).loginStyle,
               obscureText: true,
               validator: (value) {
                 value ??= '';
@@ -134,7 +125,12 @@ class LoginForm extends StatelessWidget {
               height: 20,
             ),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator
+                    .of(context)
+                    .push(MaterialPageRoute(
+                    builder: (_) => const NewUserPage()));
+                },
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
                     width: 5.0, color: theme.colorScheme.secondaryContainer),
