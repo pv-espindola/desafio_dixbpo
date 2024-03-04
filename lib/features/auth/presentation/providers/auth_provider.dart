@@ -123,7 +123,7 @@ class AuthProvider with ChangeNotifier {
     final authKey = prefs.getString('token');
 
     AuthToken authToken = authRepository.authToken;
-    print('try to signin ${authToken.userData}');
+   // print('try to signin ${authToken.userData}');
     try {
       if (authToken.haveAccess) {
         // Get user data from local storage immediately.

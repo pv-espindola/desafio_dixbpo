@@ -5,5 +5,6 @@ class Endpoint {
   // User Authentication
   static String get userLogin => 'auth/login';
   static String get userRegister => 'auth/users';
+  static String get listAuctions => 'auctions';
 
 }

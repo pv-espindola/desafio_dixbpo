@@ -1,4 +1,6 @@
 import 'package:desafio_dixbpo/features/auth/presentation/providers/register_form_provider.dart';
+import 'package:desafio_dixbpo/features/home/domain/auctions_repository.dart';
+import 'package:desafio_dixbpo/features/home/presentation/providers/auctions_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,12 @@ class ProviderScope extends StatelessWidget {
       apiService: apiService,
     );
 
+    final auctionsRepository = AuctionsRepository(
+      apiService: apiService,
+    );
+
+
+
     return MultiProvider(providers: [
       ChangeNotifierProvider<AuthProvider>(
         create: (_) => AuthProvider(authRepository: authRepository),
@@ -32,6 +40,10 @@ class ProviderScope extends StatelessWidget {
       ChangeNotifierProvider<RegisterFormProvider>(
         create: (_) => RegisterFormProvider(authRepository: authRepository),
       ),
+      ChangeNotifierProvider<AuctionsProvider>(
+        create: (_) => AuctionsProvider(repository: auctionsRepository),
+      ),
+
 
     ],
     child: child,

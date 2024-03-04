@@ -1,3 +1,5 @@
+import 'package:desafio_dixbpo/features/home/data/auction_lot.dart';
+
 class AuctionEvent {
   final int id;
   final String name;
@@ -55,7 +57,7 @@ class AuctionEvent {
   final String city;
   final String? catalogUrl;
   final List<String> banners;
-  final List<String> lots;
+  final List<AuctionLot> lots;
   final List<String> contents;
   final List<String> desks;
   final List<String> contactDesks;
@@ -124,6 +126,8 @@ class AuctionEvent {
   });
 
   factory AuctionEvent.fromMap(Map<String, dynamic> map) {
+    List<dynamic> lotData = map['lots'] ?? [];
+    List<AuctionLot> lots = List<AuctionLot>.generate(lotData.length, (index) => AuctionLot.fromMap(lotData[index]));
     return AuctionEvent(
       id: map['id'],
       name: map['name'],
@@ -176,13 +180,13 @@ class AuctionEvent {
       dateLimit: map['date_limit'],
       viewCount: map['view_count'],
       watchesCount: map['watches_count'],
-      auctioneer: map['auctioneer'],
+      auctioneer: map['auctioneer'] ?? '',
       auctionhouse: map['auctionhouse'],
       city: map['city'],
       catalogUrl: map['catalog_url'],
       banners: List<String>.from(map['banners'] ?? []),
-      lots: List<String>.from(map['lots'] ?? []),
-      contents: List<String>.from(map['contents'] ?? []),
+      lots: lots,
+      contents: [],
       desks: List<String>.from(map['desks'] ?? []),
       contactDesks: List<String>.from(map['contact_desks'] ?? []),
     );
@@ -310,7 +314,7 @@ class AuctionEvent {
     String? city,
     String? catalogUrl,
     List<String>? banners,
-    List<String>? lots,
+    List<AuctionLot>? lots,
     List<String>? contents,
     List<String>? desks,
     List<String>? contactDesks,
