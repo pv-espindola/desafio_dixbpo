@@ -1,7 +1,7 @@
 
 import '../../data/auction_event.dart';
 
-enum AuctionsStatus {empty, loaded}
+enum AuctionsStatus {empty, loading, loaded}
 class AuctionsState{
   List<AuctionEvent> auctions;
   AuctionsStatus status;

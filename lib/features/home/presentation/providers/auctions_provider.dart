@@ -16,6 +16,8 @@ class AuctionsProvider with ChangeNotifier{
   List<AuctionEvent> get bookedAuctions => _state.auctions.where((element) => element.type.isOdd).toList();
 
   void getListAuctions()async {
+    _state = _state.copyWith(status: AuctionsStatus.loading);
+    notifyListeners();
     List<AuctionEvent> auctions = await repository.getAll();
     _state = _state.copyWith(
       auctions: auctions,

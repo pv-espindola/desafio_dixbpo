@@ -14,7 +14,7 @@ class LoadingPage extends StatelessWidget {
           height: 80,
           width: 80,
           alignment: Alignment.center,
-          child: const CircularProgressIndicator()),
+          child: const CircularProgressIndicator(color: Colors.white,)),
     );
 
   }

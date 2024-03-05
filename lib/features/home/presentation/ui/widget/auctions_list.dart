@@ -1,5 +1,6 @@
 
 import 'package:desafio_dixbpo/features/home/presentation/providers/auctions_provider.dart';
+import 'package:desafio_dixbpo/features/home/presentation/providers/auctions_state.dart';
 import 'package:desafio_dixbpo/features/home/presentation/ui/widget/auction_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,26 +46,38 @@ class _AuctionsListState extends State<AuctionsList> {
 
   @override
   Widget build(BuildContext context) {
-    print('$title :${auctions.length}');
+
     ThemeData theme = Theme.of(context);
     initAuctionsList();
+    bool isLoading = auctionsProvider.state.status == AuctionsStatus.loading;
 
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(title,
-        style: theme.textTheme.headlineMedium,
-        ),
-        const SizedBox(height: 16,),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: auctions.length,
-            itemBuilder: (context, index){
-            AuctionEvent auction = auctions[index];
-              return AuctionCard(auction: auction);
-            }),
-      ],
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(title,
+          style: theme.textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 16,),
+          isLoading?
+          Container(
+            height: 80,
+            width: 80,
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            child: CircularProgressIndicator(color: theme.colorScheme.primary,),
+          )
+              : ListView.builder(
+            shrinkWrap: true,
+            itemCount: auctions.length,
+              itemBuilder: (context, index){
+              AuctionEvent auction = auctions[index];
+                return AuctionCard(auction: auction);
+              }),
+        ],
+      ),
     );
   }
 }
