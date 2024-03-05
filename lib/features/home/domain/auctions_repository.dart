@@ -17,6 +17,7 @@ class AuctionsRepository {
     Map<String, dynamic> data =
         json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
     List< dynamic> auctionsData = data['data'];
+    print('AUCTIONS RESPONSE DATA: ${auctionsData.length}');
     auctions = List.generate(auctionsData.length,
         (index) => AuctionEvent.fromMap(auctionsData[index]));
     return auctions;

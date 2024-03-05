@@ -1,6 +1,11 @@
 import 'package:desafio_dixbpo/features/home/presentation/providers/auctions_provider.dart';
+import 'package:desafio_dixbpo/features/home/presentation/ui/widget/auctions_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+
+import '../widget/menu_buttom.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,20 +25,28 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
+
     return  Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       centerTitle: true,
-        actions: [ Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: IconButton(onPressed: (){}, icon: const  Icon(Icons.more_vert)),
+        actions: const [ Padding(
+          padding: EdgeInsets.only(right: 12.0),
+          child: MenuButton(),
         )],
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
+      body:  const SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 24,),
+              Flexible(child: AuctionsList(type: AuctionsType.online)),
+              SizedBox(height: 16,),
+              Flexible(child: AuctionsList(type: AuctionsType.booked)),
 
-          ],
+            ],
+          ),
         ),
       ),
     );

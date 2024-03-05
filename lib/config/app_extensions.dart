@@ -10,3 +10,10 @@ extension FocusNodeExtension on FocusScopeNode {
   }
 }
 
+extension MyThemeExtensions on ThemeData {
+  BoxDecoration get myLightGlassBox =>
+      BoxDecoration(
+          color: colorScheme.primary.withOpacity(.3),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: colorScheme.primary));
+}

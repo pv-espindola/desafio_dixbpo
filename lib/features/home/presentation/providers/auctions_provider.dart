@@ -12,6 +12,8 @@ class AuctionsProvider with ChangeNotifier{
   AuctionsState _state = AuctionsState.empty();
   AuctionsState get state => _state;
 
+  List<AuctionEvent> get onlineAuctions => _state.auctions.where((element) => element.type.isEven).toList();
+  List<AuctionEvent> get bookedAuctions => _state.auctions.where((element) => element.type.isOdd).toList();
 
   void getListAuctions()async {
     List<AuctionEvent> auctions = await repository.getAll();
@@ -21,6 +23,10 @@ class AuctionsProvider with ChangeNotifier{
     );
     notifyListeners();
   }
+
+
+
+
 
 
 }

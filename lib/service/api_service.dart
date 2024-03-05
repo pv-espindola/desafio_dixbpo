@@ -46,6 +46,8 @@ class ApiService {
     };
   }
 
+  bool get headersConfigured => headers.containsKey('app');
+
   addTokenAccess(String token){
     headers.addAll({authKey: 'Bearer $token'});
   }
@@ -79,7 +81,9 @@ class ApiService {
         Object? body,
         Map<String, String>? params
       }) async {
-
+    if(!headersConfigured){
+      configHeaders();
+    }
     try {
       var response = await http.post(
         endpointUri(endpoint,  params: params),
