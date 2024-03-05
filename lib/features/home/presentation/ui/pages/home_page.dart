@@ -1,3 +1,4 @@
+import 'package:desafio_dixbpo/features/auth/presentation/providers/auth_provider.dart';
 import 'package:desafio_dixbpo/features/home/presentation/providers/auctions_provider.dart';
 import 'package:desafio_dixbpo/features/home/presentation/ui/widget/auctions_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late AuctionsProvider auctionsProvider;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -23,27 +25,33 @@ class _HomePageState extends State<HomePage> {
     auctionsProvider = context.read<AuctionsProvider>();
     auctionsProvider.getListAuctions();
   }
+
   @override
   Widget build(BuildContext context) {
-
-    return  Scaffold(
+    AuthProvider auth = context.read<AuthProvider>();
+    ThemeData theme = Theme.of(context);
+    return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
-      centerTitle: true,
+        title: const Text('Home'),
+        centerTitle: true,
         actions: const [ Padding(
           padding: EdgeInsets.only(right: 12.0),
           child: MenuButton(),
-        )],
+        )
+        ],
       ),
-      body:  const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: 24,),
-              Flexible(child: AuctionsList(type: AuctionsType.online)),
-              SizedBox(height: 16,),
-              Flexible(child: AuctionsList(type: AuctionsType.booked)),
+              Text('Bem vindo ${auth.state.user?.people.name}',
+                style:theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.primary),
+              ),
+              const SizedBox(height: 24,),
+              const Flexible(child: AuctionsList(type: AuctionsType.online)),
+              const SizedBox(height: 16,),
+              const Flexible(child: AuctionsList(type: AuctionsType.booked)),
 
             ],
           ),
