@@ -20,7 +20,7 @@ class _MainViewState extends State<MainView> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp)=>
-    context.read<AuthProvider>().tryAutoSignin(AppConfig.of(context).prefs));
+    context.read<AuthProvider>().tryAutoSignin(context, AppConfig.of(context).prefs));
   }
 
   @override

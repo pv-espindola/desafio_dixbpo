@@ -100,7 +100,7 @@ class LoginForm extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                auth.login();
+                auth.login(context);
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith(

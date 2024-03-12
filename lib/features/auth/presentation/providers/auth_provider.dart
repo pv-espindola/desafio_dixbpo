@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:desafio_dixbpo/features/auth/data/auth_token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../service/api_service.dart';
@@ -78,7 +79,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     setAuthState(status: AuthStatus.loading);
     if(formKey.currentState!.validate()){
       formKey.currentState!.save();
@@ -86,7 +87,23 @@ class AuthProvider with ChangeNotifier {
     try {
       print('email: $_email  password: $_password ');
 
-      User user = await authRepository.login(_email, _password);
+     var (User? user, int responseCode) = await authRepository.login(_email, _password);
+
+      setAuthState(status: AuthStatus.authenticated, user: user);
+
+    } catch (e) {
+      userFeedback(context, 401 );
+      setAuthState(status: AuthStatus.unauthenticated);
+      debugPrint('LOGIN ERROR:  $e');
+    }
+  }
+
+  Future<void> login2(BuildContext context, String username, String password) async {
+    setAuthState(status: AuthStatus.loading);
+    try {
+      print('email: $username  password: $password ');
+
+      var (User? user, int responseCode) = await authRepository.login(username, password);
 
       setAuthState(status: AuthStatus.authenticated, user: user);
     } catch (e) {
@@ -95,18 +112,20 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> login2(String username, String password) async {
-    setAuthState(status: AuthStatus.loading);
-    try {
-      print('email: $username  password: $password ');
+  void userFeedback(BuildContext context,int responseCode){
+    String value ='';
+    switch(responseCode){
+      case 200: value = 'Login com sucesso.';
+      break;
+      case 401: value = 'Email ou senha incorretos.';
+      break;
 
-      User user = await authRepository.login(username, password);
-
-      setAuthState(status: AuthStatus.authenticated, user: user);
-    } catch (e) {
-      setAuthState(status: AuthStatus.unauthenticated);
-      debugPrint('LOGIN ERROR:  $e');
     }
+    var snackBar = SnackBar(
+      content: Text(value),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
 
@@ -114,7 +133,9 @@ class AuthProvider with ChangeNotifier {
   /// Checks if user is stored locally. If so, get it, update the state and
   /// trigger an asynchronous request in order to update latest user information
   /// in the background. If there's no user information locally, force sign out.
-  Future<void> tryAutoSignin(SharedPreferences prefs,
+  Future<void> tryAutoSignin(
+  BuildContext context,
+      SharedPreferences prefs,
       {bool testing = false}) async {
 
     setAuthState(status: AuthStatus.loading);
@@ -128,7 +149,7 @@ class AuthProvider with ChangeNotifier {
       if (authToken.haveAccess) {
         // Get user data from local storage immediately.
         final user = User.fromMap(authToken.userData);
-
+        userFeedback(context, 200);
         setAuthState(
           status: AuthStatus.authenticated,
           authKey: authToken.token,

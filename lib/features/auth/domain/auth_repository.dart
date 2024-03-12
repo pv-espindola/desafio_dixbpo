@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:desafio_dixbpo/features/auth/data/auth_token.dart';
 import 'package:desafio_dixbpo/features/auth/data/register_form_model.dart';
 import 'package:desafio_dixbpo/features/auth/presentation/ui/widgets/register_form.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/app_config.dart';
@@ -25,7 +26,7 @@ class AuthRepository {
 
 
 
-  Future<User> login(String email, String password) async {
+  Future<(User?, int)> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
 
 
@@ -37,7 +38,7 @@ class AuthRepository {
         final user = User.fromMap(json.decode(userData));
 
 
-        return user;
+        return (user, 200);
       } else {
       final response = await apiService.post(
           Endpoint.userLogin,
@@ -60,9 +61,9 @@ class AuthRepository {
           'id' : user.id,
           'user_data' : jsonEncode(userData)
         });
-        return user;
+        return (user, response.statusCode);
       }
-    } on Exception {
+    }on Exception {
       await apiService.removeLocalCredentials();
       rethrow;
     }

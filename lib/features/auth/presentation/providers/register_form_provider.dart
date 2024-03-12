@@ -66,7 +66,7 @@ class RegisterFormProvider with ChangeNotifier {
       if (lastField) {
 
         bool isOk = await createNewUser();
-        isOk? auth.login2(_state.formModel.email, _state.formModel.senha1)
+        isOk? auth.login2(context, _state.formModel.email, _state.formModel.senha1)
         : print('DEU ERRADO');
         Navigator.of(context).pop();
         Future.delayed(const Duration(seconds: 2), () =>
